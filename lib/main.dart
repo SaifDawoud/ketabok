@@ -4,7 +4,6 @@ import 'package:ketabok/home/views/sura_details.dart';
 import 'package:ketabok/splash/views/splash_view.dart';
 import 'package:ketabok/style/my_theme.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -20,12 +19,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'ketabok',
       theme: MyTheme.darkTheme,
-      darkTheme:MyTheme.darkTheme ,
-      themeMode:ThemeMode.dark ,
-      home:const SplashView() ,
-      routes: {
-        SuraDetails.routName:(_)=>SuraDetails()
-      },
+      darkTheme: MyTheme.darkTheme,
+      themeMode: ThemeMode.dark,
+      home: const SplashView(),
     );
   }
 }

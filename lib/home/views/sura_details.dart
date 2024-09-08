@@ -12,9 +12,10 @@ import '../data/models/sura.dart';
 
 class SuraDetails extends StatefulWidget {
   static String routName = '/sura_details';
+  late Sura sura;
 
   //https://equran.id/api/v2/surat/1
-  SuraDetails({super.key});
+  SuraDetails({required this.sura, super.key});
 
   @override
   State<SuraDetails> createState() => _SuraDetailsState();
@@ -43,8 +44,8 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _player.setAudioSource(AudioSource.uri(Uri.parse(
-          "https://equran.nos.wjv-1.neo.id/audio-full/Ibrahim-Al-Dossari/001.mp3")));
+      await _player.setAudioSource(
+          AudioSource.uri(Uri.parse(widget.sura.audioFull['04']!)));
     } on PlayerException catch (e) {
       print("Error loading audio source: $e");
     }
@@ -81,10 +82,6 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final routArgus =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Sura>;
-    late Sura? sura = routArgus['sura'];
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -94,7 +91,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
           icon: SvgPicture.asset("assets/svgs/arrow_back.svg"),
         ),
         backgroundColor: MyTheme.darkScaffold,
-        title: Text("${sura!.namaLatin}",
+        title: Text("${widget.sura.namaLatin}",
             style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 20,
@@ -109,7 +106,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
               children: [
                 Center(
                   child: Container(
-                    height: 265,
+                    height: 200,
                     width: 350,
                     decoration: BoxDecoration(
                         gradient: const LinearGradient(
@@ -141,11 +138,37 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
                 Positioned(
                     top: 10,
                     right: 60,
-                    child: SvgPicture.asset("assets/svgs/basmalah.svg"))
+                    child: SvgPicture.asset("assets/svgs/basmalah.svg")),
+                Positioned(
+                    top: 120,
+                    right: 20,
+                    child: Text(
+                      widget.sura.nama,
+                      style: GoogleFonts.poppins(
+                          color: Colors.white, fontSize: 18),
+                    )),
+                Positioned(
+                    top: 120,
+                    left: 20,
+                    child: Text(
+                      widget.sura.namaLatin,
+                      style: GoogleFonts.poppins(
+                          color: Colors.white, fontSize: 18),
+                    )),
+                Positioned(
+                    left: 150,
+                    top: 120,
+                    child: Text(
+                      ' ${widget.sura.jumlahAyat} Ayat',
+                      style: GoogleFonts.poppins(
+                          color: Colors.white, fontSize: 18),
+                    )),
               ],
             ),
           ),
-          SizedBox(height: 60,),
+          const SizedBox(
+            height: 60,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -188,7 +211,10 @@ class ControlButtons extends StatelessWidget {
       children: [
         // Opens volume slider dialog
         IconButton(
-          icon: const Icon(Icons.volume_up,color: Colors.white,),
+          icon: const Icon(
+            Icons.volume_up,
+            color: Colors.white,
+          ),
           onPressed: () {
             showSliderDialog(
               context: context,
@@ -223,19 +249,22 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon: const Icon(Icons.play_arrow,color: Colors.white,),
+                icon: const Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                ),
                 iconSize: 64.0,
                 onPressed: player.play,
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon: const Icon(Icons.pause,color: Colors.white),
+                icon: const Icon(Icons.pause, color: Colors.white),
                 iconSize: 64.0,
                 onPressed: player.pause,
               );
             } else {
               return IconButton(
-                icon: const Icon(Icons.replay,color: Colors.white),
+                icon: const Icon(Icons.replay, color: Colors.white),
                 iconSize: 64.0,
                 onPressed: () => player.seek(Duration.zero),
               );
@@ -247,7 +276,8 @@ class ControlButtons extends StatelessWidget {
           stream: player.speedStream,
           builder: (context, snapshot) => IconButton(
             icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
-                style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white)),
             onPressed: () {
               showSliderDialog(
                 context: context,
