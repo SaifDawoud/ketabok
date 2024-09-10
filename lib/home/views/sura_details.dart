@@ -12,10 +12,9 @@ import '../data/models/sura.dart';
 
 class SuraDetails extends StatefulWidget {
   static String routName = '/sura_details';
-  late Sura sura;
-
+  late Sura? sura;
   //https://equran.id/api/v2/surat/1
-  SuraDetails({required this.sura, super.key});
+  SuraDetails({ this.sura, super.key});
 
   @override
   State<SuraDetails> createState() => _SuraDetailsState();
@@ -44,11 +43,11 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _player.setAudioSource(
-          AudioSource.uri(Uri.parse(widget.sura.audioFull['04']!)));
+      await _player.setAudioSource(AudioSource.uri(Uri.parse(
+          widget.sura!.audioFull['04']!)));
     } on PlayerException catch (e) {
       print("Error loading audio source: $e");
-    }
+    } on PlayerInterruptedException catch (e){print(e.toString());}
   }
 
   @override
@@ -57,6 +56,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
     // Release decoders and buffers back to the operating system making them
     // available for other apps to use.
     _player.dispose();
+
     super.dispose();
   }
 
@@ -83,90 +83,127 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: SvgPicture.asset("assets/svgs/arrow_back.svg"),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+                        },
+            icon: SvgPicture.asset("assets/svgs/arrow_back.svg"),
+          ),
+          backgroundColor: MyTheme.darkScaffold,
+          title: Text(widget.sura!.namaLatin,
+              style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
         ),
-        backgroundColor: MyTheme.darkScaffold,
-        title: Text("${widget.sura.namaLatin}",
-            style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Stack(
               children: [
-                Center(
-                  child: Container(
-                    height: 200,
-                    width: 350,
-                    decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                            stops: [
-                              0,
-                              .6,
-                              1
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Stack(children: [
+                    Container(
+                      height: 257,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              stops: [
+                                0,
+                                .6,
+                                1
+                              ],
+                              colors: [
+                                Color(0xFFDF98FA),
+                                Color(0xFFB070FD),
+                                Color(0xFF9055FF)
+                              ])),
+                    ),
+                    Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Opacity(
+                            opacity: .2,
+                            child: SvgPicture.asset(
+                              'assets/svgs/quran.svg',
+                              width: 324 - 55,
+                            ))),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(28),
+                      child: Column(
+                        children: [
+                          Text(
+                            widget.sura!.namaLatin,
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 26),
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            widget.sura!.nama,
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16),
+                          ),
+                          Divider(
+                            color: Colors.white.withOpacity(.35),
+                            thickness: 2,
+                            height: 32,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.sura!.tempatTurun,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Container(
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(2),
+                                    color: Colors.white),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "${widget.sura!.jumlahAyat} Ayat",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ],
-                            colors: [
-                              MyTheme.startgradient,
-                              MyTheme.middlegradient,
-                              MyTheme.endgradient
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight),
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          SvgPicture.asset('assets/svgs/basmalah.svg')
+                        ],
+                      ),
+                    )
+                  ]),
                 ),
-                Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Opacity(
-                        opacity: 0.06,
-                        child: SvgPicture.asset(
-                          "assets/svgs/home_quran.svg",
-                          width: 345,
-                          clipBehavior: Clip.hardEdge,
-                        ))),
-                Positioned(
-                    top: 10,
-                    right: 60,
-                    child: SvgPicture.asset("assets/svgs/basmalah.svg")),
-                Positioned(
-                    top: 120,
-                    right: 20,
-                    child: Text(
-                      widget.sura.nama,
-                      style: GoogleFonts.poppins(
-                          color: Colors.white, fontSize: 18),
-                    )),
-                Positioned(
-                    top: 120,
-                    left: 20,
-                    child: Text(
-                      widget.sura.namaLatin,
-                      style: GoogleFonts.poppins(
-                          color: Colors.white, fontSize: 18),
-                    )),
-                Positioned(
-                    left: 150,
-                    top: 120,
-                    child: Text(
-                      ' ${widget.sura.jumlahAyat} Ayat',
-                      style: GoogleFonts.poppins(
-                          color: Colors.white, fontSize: 18),
-                    )),
               ],
             ),
           ),
-          const SizedBox(
+          SizedBox(
             height: 60,
           ),
           Column(
@@ -192,10 +229,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
               ),
             ],
           ),
-        ],
-      ),
-      backgroundColor: MyTheme.darkScaffold,
-    );
+        ]));
   }
 }
 
