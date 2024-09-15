@@ -19,7 +19,7 @@ class SuraTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Sura>>(
-      initialData: [],
+      initialData: const [],
       future: getSurasList(),
       builder: (BuildContext context, snapshot) {
         if (!snapshot.hasData) {
@@ -75,14 +75,14 @@ class SuraTab extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("${sura.namaLatin}",
+                      Text(sura.namaLatin,
                           style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w500)),
                       Row(
                         children: [
-                          Text("${sura.tempatTurun}",
+                          Text(sura.tempatTurun,
                               style: GoogleFonts.poppins(
                                   color: MyTheme.text,
                                   fontSize: 12,
@@ -105,7 +105,7 @@ class SuraTab extends StatelessWidget {
                   ),
                 ),
               ),
-              Text("${sura.nama}",
+              Text(sura.nama,
                   style: GoogleFonts.amiri(
                       color: MyTheme.primaryColor,
                       fontSize: 20,

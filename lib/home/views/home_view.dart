@@ -6,52 +6,172 @@ import 'package:ketabok/home/views/widgets/tabs/page_tab.dart';
 import 'package:ketabok/home/views/widgets/tabs/para_tab.dart';
 import 'package:ketabok/home/views/widgets/tabs/sura_tab.dart';
 import 'package:ketabok/style/my_theme.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+class HomeView extends StatefulWidget {
+  HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController myController;
+  var minDragStartEdge = 10;
+  var maxDragStartEdge = 300;
+  bool isDrawerOpen = false;
+
+  @override
+  void initState() {
+    myController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 450));
+    super.initState();
+  }
+
+  void toggle() => myController.isDismissed
+      ? myController.forward()
+      : myController.reverse();
+
+  late Widget frontWidget = Scaffold(
+    appBar: myAppBar(),
+    bottomNavigationBar: myBottomNavBar(),
+    body: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: DefaultTabController(
+        length: 4,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverToBoxAdapter(
+              child: sayingHi(),
+            ),
+            SliverAppBar(
+              backgroundColor: MyTheme.darkScaffold,
+              automaticallyImplyLeading: false,
+              surfaceTintColor: MyTheme.darkScaffold,
+              elevation: 0,
+              pinned: true,
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(0),
+                child: TabBar(
+                    indicatorColor: MyTheme.primaryColor,
+                    indicatorWeight: 3,
+                    dividerColor: Colors.grey.withOpacity(0.1),
+                    unselectedLabelColor: MyTheme.text,
+                    labelColor: Colors.white,
+                    tabs: [
+                      myTab(lable: "Sura"),
+                      myTab(lable: "Para"),
+                      myTab(lable: "Page"),
+                      myTab(lable: "Hijb"),
+                    ]),
+              ),
+            )
+          ],
+          body: const TabBarView(
+            children: [SuraTab(), ParaTab(), PageTab(), HijbTab()],
+          ),
+        ),
+      ),
+    ),
+  );
+
+  Widget backgroundWidget = Scaffold(
+    backgroundColor: MyTheme.darkScaffold.withOpacity(0.6),
+    body: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        const SizedBox(
+          height: 240,
+        ),
+        Column(
+          children: <Widget>[
+            Divider(
+              color: Colors.white.withOpacity(0.2),
+              height: 10,
+              thickness: 2,
+            ),
+            InkWell(
+              onTap: () async {
+                await launchUrl(
+                    Uri.parse('https://www.linkedin.com/in/saif-dawoud'));
+              },
+              child: const ListTile(
+                leading: FaIcon(
+                  FontAwesomeIcons.linkedin,
+                  color: Colors.white,
+                ),
+                title: Text(
+                  'checkout my linkedin',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            Divider(
+              color: Colors.white.withOpacity(0.2),
+              height: 10,
+              thickness: 2,
+            ),
+            InkWell(
+              onTap: () async {
+                await launchUrl(Uri.parse('https://github.com/SaifDawoud'));
+              },
+              child: const ListTile(
+                leading: FaIcon(
+                  FontAwesomeIcons.github,
+                  color: Colors.white,
+                ),
+                title: Text('checkout my github',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ),
+            Divider(
+              color: Colors.white.withOpacity(0.2),
+              height: 10,
+              thickness: 2,
+            ),
+            const ListTile(
+              leading: Icon(
+                Icons.email,
+                color: Colors.white,
+              ),
+              title: Text('saif.dawoud@outlook.com',
+                  style: TextStyle(color: Colors.white)),
+            ),
+            Divider(
+              color: Colors.white.withOpacity(0.2),
+              height: 10,
+              thickness: 2,
+            ),
+          ],
+        )
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: myAppBar(),
-      bottomNavigationBar: myBottomNavBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: DefaultTabController(
-          length: 4,
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverToBoxAdapter(
-                child: sayingHi(),
-              ),
-              SliverAppBar(
-                backgroundColor: MyTheme.darkScaffold,
-                automaticallyImplyLeading: false,
-                surfaceTintColor: MyTheme.darkScaffold,
-                elevation: 0,
-                pinned: true,
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(0),
-                  child: TabBar(
-                      indicatorColor: MyTheme.primaryColor,
-                      indicatorWeight: 3,
-                      dividerColor: Colors.grey.withOpacity(0.1),
-                      unselectedLabelColor: MyTheme.text,
-                      labelColor: Colors.white,
-                      tabs: [
-                        myTab(lable: "Sura"),
-                        myTab(lable: "Para"),
-                        myTab(lable: "Page"),
-                        myTab(lable: "Hijb"),
-                      ]),
-                ),
-              )
+    return GestureDetector(
+      child: AnimatedBuilder(
+        animation: myController,
+        builder: (context, _) {
+          double scale = 1 - (myController.value * 0.1);
+          double slide = 230 * myController.value;
+
+          return Stack(
+            children: <Widget>[
+              backgroundWidget,
+              Transform(
+                  alignment: Alignment.centerLeft,
+                  transform: Matrix4.identity()
+                    ..scale(scale)
+                    ..translate(slide),
+                  child: frontWidget),
             ],
-            body: TabBarView(
-              children: [SuraTab(), ParaTab(), PageTab(), HijbTab()],
-            ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -189,7 +309,12 @@ class HomeView extends StatelessWidget {
     return AppBar(
       backgroundColor: MyTheme.darkScaffold,
       leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            toggle();
+            setState(() {
+              isDrawerOpen = !isDrawerOpen;
+            });
+          },
           icon: SvgPicture.asset("assets/svgs/burgerIcon.svg")),
       title: Text("Quran App",
           style: GoogleFonts.poppins(

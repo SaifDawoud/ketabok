@@ -10,13 +10,13 @@ class SeekBar extends StatefulWidget {
   final ValueChanged<Duration>? onChangeEnd;
 
   const SeekBar({
-    Key? key,
+    super.key,
     required this.duration,
     required this.position,
     required this.bufferedPosition,
     this.onChanged,
     this.onChangeEnd,
-  }) : super(key: key);
+  });
 
   @override
   SeekBarState createState() => SeekBarState();
@@ -97,11 +97,12 @@ class SeekBarState extends State<SeekBar> {
           right: 16.0,
           bottom: 0.0,
           child: Text(
-              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                  .firstMatch("$_remaining")
-                  ?.group(1) ??
-                  '$_remaining',
-              style: TextStyle(color: Colors.white,fontSize: 12),),
+            RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                    .firstMatch("$_remaining")
+                    ?.group(1) ??
+                '$_remaining',
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
         ),
       ],
     );
@@ -116,19 +117,19 @@ class HiddenThumbComponentShape extends SliderComponentShape {
 
   @override
   void paint(
-      PaintingContext context,
-      Offset center, {
-        required Animation<double> activationAnimation,
-        required Animation<double> enableAnimation,
-        required bool isDiscrete,
-        required TextPainter labelPainter,
-        required RenderBox parentBox,
-        required SliderThemeData sliderTheme,
-        required TextDirection textDirection,
-        required double value,
-        required double textScaleFactor,
-        required Size sizeWithOverflow,
-      }) {}
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {}
 }
 
 class PositionData {

@@ -6,7 +6,6 @@ import 'package:ketabok/common.dart';
 import 'package:ketabok/style/my_theme.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/services.dart';
 
 import '../data/models/sura.dart';
 
@@ -14,7 +13,7 @@ class SuraDetails extends StatefulWidget {
   static String routName = '/sura_details';
   late Sura? sura;
   //https://equran.id/api/v2/surat/1
-  SuraDetails({ this.sura, super.key});
+  SuraDetails({this.sura, super.key});
 
   @override
   State<SuraDetails> createState() => _SuraDetailsState();
@@ -36,18 +35,15 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
     // Listen to errors during playback.
-    _player.playbackEventStream.listen((event) {},
-        onError: (Object e, StackTrace stackTrace) {
-      print('A stream error occurred: $e');
-    });
+    _player.playbackEventStream
+        .listen((event) {}, onError: (Object e, StackTrace stackTrace) {});
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _player.setAudioSource(AudioSource.uri(Uri.parse(
-          widget.sura!.audioFull['04']!)));
-    } on PlayerException catch (e) {
-      print("Error loading audio source: $e");
-    } on PlayerInterruptedException catch (e){print(e.toString());}
+      await _player.setAudioSource(
+          AudioSource.uri(Uri.parse(widget.sura!.audioFull['04']!)));
+    } on PlayerException catch (_) {
+    } on PlayerInterruptedException catch (_) {}
   }
 
   @override
@@ -87,7 +83,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
           leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
-                        },
+            },
             icon: SvgPicture.asset("assets/svgs/arrow_back.svg"),
           ),
           backgroundColor: MyTheme.darkScaffold,
@@ -203,7 +199,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 60,
           ),
           Column(
@@ -236,7 +232,7 @@ class _SuraDetailsState extends State<SuraDetails> with WidgetsBindingObserver {
 class ControlButtons extends StatelessWidget {
   final AudioPlayer player;
 
-  const ControlButtons(this.player, {Key? key}) : super(key: key);
+  const ControlButtons(this.player, {super.key});
 
   @override
   Widget build(BuildContext context) {

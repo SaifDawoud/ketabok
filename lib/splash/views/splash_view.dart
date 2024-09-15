@@ -112,7 +112,7 @@ class _SplashViewState extends State<SplashView>
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const HomeView(),
+                      builder: (context) => HomeView(),
                     ));
                   },
                   child: Container(

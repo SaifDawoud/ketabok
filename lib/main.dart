@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ketabok/home/views/sura_details.dart';
 import 'package:ketabok/splash/views/splash_view.dart';
 import 'package:ketabok/style/my_theme.dart';
 
